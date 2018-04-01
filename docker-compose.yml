@@ -1,0 +1,89 @@
+version: '2'
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+services:
+
+  app:
+    # build: .
+    image: ambientum/php:7.0-apache
+    container_name: ${APP_NAME}-php
+    volumes:
+      - ${APP_DIR}:/var/www/app
+    ports:
+      - "80:8080"
+    links:
+      - ${DB_HOST}
+      - ${REDIS_HOST}
+
+  node:
+    image: ambientum/node:8
+    container_name: ${APP_NAME}-node
+    # command: npm run dev
+    volumes:
+      - .:/var/www/app
+    ports:
+      - 8080:8080
+
+  mysql:
+    image: ambientum/mysql:5.7
+    container_name: ${APP_NAME}-mysql
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_BASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${APP_NAME}-phpmyadmin
+    environment:
+      PMA_HOST: ${DB_HOST}
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASS}
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    restart: always
+    ports:
+     - 8001:80
+    volumes:
+     - /sessions
+
+  cache:
+    image: ambientum/redis:3.2
+    container_name: ${APP_NAME}-redis
+    command: --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+
+  queue:
+    image: ambientum/php:7.0
+    container_name: ${APP_NAME}-queue
+    command: php artisan queue:listen
+    volumes:
+      - ${APP_DIR}:/var/www/app
+    links:
+      - ${DB_HOST}
+      - ${REDIS_HOST}
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: ${APP_NAME}-mailhog
+    ports:
+      # 1025: this port is used for SMTP, You will not need to uncommed this here, unless you have a very
+      #       specific use case.
+      # - 1025:1025
+      # 8025: this port is used for the web interface on mailhog.
+      #       It's just like a email client. that will list all emails you've sent.
+      - 1025:1025
+      - 8025:8025
