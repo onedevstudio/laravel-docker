@@ -16,6 +16,13 @@
     "jquery": "^3.2",
     "laravel-mix": "^1.0",
     "lodash": "^4.17.4",
-    "vue": "^2.5.7"
+    "rupture": "^0.7.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vue": "^2.5.7",
+    "vue-axios": "^2.1.1",
+    "vue-loader": "^14.2.2",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.16"
   }
 }

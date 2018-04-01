@@ -20,15 +20,6 @@ services:
       - ${DB_HOST}
       - ${REDIS_HOST}
 
-  node:
-    image: ambientum/node:8
-    container_name: ${APP_NAME}-node
-    # command: npm run dev
-    volumes:
-      - .:/var/www/app
-    ports:
-      - 8080:8080
-
   mysql:
     image: ambientum/mysql:5.7
     container_name: ${APP_NAME}-mysql
