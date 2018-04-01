@@ -13,11 +13,14 @@ import Example from './components/Example.vue';
 const routes = [
   {
     name: 'Example',
-    path: '/',
+    path: '/example',
     component: Example
   }
 ];
 
-const router = new VueRouter({ mode: 'history' });
+const router = new VueRouter({
+  mode: 'history',
+  routes
+});
 
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');
